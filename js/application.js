@@ -29,10 +29,10 @@ var lucky = (function (){
   }
 
   this.showAllTickets = function(){
-    $('#tickets').empty();
     db.transaction(function (tx) {
       tx.executeSql('SELECT * FROM names', [], function (tx, results) {
         var len = results.rows.length, i, ticket;
+        $('#tickets').empty();
         for (i = 0; i < len; i++){
           ticket = results.rows.item(i);
           $('#tickets').append('<tr><td>'+ticket.name+'</td><td>'+ticket.status+'</td></tr>');
@@ -42,22 +42,42 @@ var lucky = (function (){
   }
 
   this.showLuckyNames = function(){
-    $('#lucky-names').empty();
     db.transaction(function (tx) {
       tx.executeSql('SELECT * FROM names WHERE status = 1', [], function (tx, results) {
         var len = results.rows.length, i;
+        $('#lucky-names').empty();
         for (i = 0; i < len; i++)
           $('#lucky-names').append('<li>'+results.rows.item(i).name+'</li>');
       });
     });
   }
 
+  this.getFiveRandom = function(len) {
+    if(len <= 0) return [];
+    var randomAry = [];
+    while(randomAry.length < (len > 5 ? 5 : len)) {
+      var num = rand(len);
+      var isSame = false;
+      for(var i = 0, nLen = randomAry.length; i < nLen; i++) {
+        if(randomAry[i] === num) {
+          isSame = true;
+          break;
+        }
+      }
+      if(!isSame) randomAry.push(num);
+    }
+    return randomAry;
+  }
+
   this.rolling = function(){
     db.transaction(function(tx) {
       tx.executeSql('SELECT * FROM names WHERE status = 0', [], function (tx, results) {
-        var i = rand(results.rows.length+1);
-        var name = results.rows.item(i-1).name;
-        $('#random').text(name);
+        var randomAry = getFiveRandom(results.rows.length);
+        var nameAry = [];
+        for(var i = 0, len = randomAry.length; i < len; i++) {
+          nameAry.push(results.rows.item(randomAry[i] - 1).name);
+        }
+        $('#random').text(nameAry.join(' '));
       });
     });
   }
@@ -70,10 +90,16 @@ var lucky = (function (){
     clearInterval(this.intervalID);
 
     db.transaction(function(tx) {
-      tx.executeSql("UPDATE names SET status=1 WHERE name = ?", [$('#random').text()], function (tx, results) {
-        this.showLuckyNames();
-        this.showAllTickets();
-      });
+      var names = $('#random').text().split(' ');
+      for(var i = 0, len = names.length; i < len; i++) {
+        tx.executeSql("UPDATE names SET status = 1 WHERE name = ?", [names[i]],
+          function (tx, results) {
+            this.showLuckyNames();
+            this.showAllTickets();
+          }
+        );
+      }
+
     });
   };
 
