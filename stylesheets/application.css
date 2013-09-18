@@ -168,7 +168,7 @@ h2{
 }
 
 .container{
-  width: 960px;
+  width: 100%;
   margin: 0 auto;
   padding: 0 0 50px 0;
 }
@@ -190,10 +190,10 @@ h2{
 }
 
 #lucky-draw .container{
-  background: url('../images/header_icons.png') 75px 90px no-repeat;
-  width: 960px;
+  background: url('../images/header_icons.png') 50% 50% no-repeat;
+  width: 100%;
   height: 100%;
-  padding: 0 10px;
+  padding: 0;
   margin: auto;
   position: relative;
 }
@@ -261,10 +261,11 @@ h2{
   padding: 10px 0;
   float: left;
   width: 240px;
+  text-align: center;
 }
 
-#tickets{ width: 100%;}
-#tickets tr td{ padding: 10px 15px; border: 1px solid #CCC}
+#tickets{ min-width: 970px; margin-left: auto; margin-right: auto; }
+#tickets tr td{ padding: 10px 15px; border: 1px solid #CCC; text-align: center; }
 #tickets tr td:first-child{  }
 #tickets tr td:last-child{ width: 50px; text-align: center; }
 

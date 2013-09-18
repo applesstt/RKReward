@@ -17,6 +17,8 @@ var lucky = (function (){
       tx.executeSql("DROP TABLE names", [], function(tx, results){
         alert("Clear data success!");
         this.initDB();
+        this.showLuckyNames();
+        this.showAllTickets();
       });
     });
   }
@@ -137,8 +139,6 @@ $(function(){
 
   $('body').delegate('#clear-data-button', 'click', function(event){
     lucky.clearDB();
-    lucky.showLuckyNames();
-    lucky.showAllTickets();
   });
 
   $('#lucky-button').toggle(
