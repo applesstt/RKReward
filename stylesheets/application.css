@@ -198,19 +198,27 @@ h2{
   position: relative;
 }
 
-#random-container{
+#random-container {
   height: 100px;
   width: 100%;
   position: absolute;
   top: 50%;
-  margin: -80px 0 0 0;
+  margin: 0;
   text-align: center;
 }
 
-#random{
+#random {
+  color: #FFF;
+  font-size: 50px;
+  text-shadow: #612C0C -2px 2px 0px;
+  margin-top: -200px;
+  line-height: 75px;
+}
+#random-title {
   color: #FFF;
   font-size: 5em;
   text-shadow: #612C0C -2px 2px 0px;
+  margin-top: -80px;
 }
 
 #actions{
@@ -259,8 +267,8 @@ h2{
 
 #lucky-names li{
   padding: 10px 0;
-  float: left;
   width: 240px;
+  float: left;
   text-align: center;
 }
 
