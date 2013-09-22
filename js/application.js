@@ -12,13 +12,30 @@ var lucky = (function (){
     });
   }
 
-  this.clearDB = function(){
+
+  this.inport_names = function(){
+    var list_str = $('#data-source').val();
+    var names = [];
+    var list_lines = list_str.split("\n");
+    for (var i = 0; i < list_lines.length; i++) {
+      var name = $.trim(list_lines[i]);
+      if (name != "") names.push(name);
+    }
+    lucky.import_data(names);
+    lucky.showAllTickets();
+  }
+
+
+  this.clearDB = function(importFlag){
     db.transaction(function(tx) {
       tx.executeSql("DROP TABLE names", [], function(tx, results){
-        alert("Clear data success!");
+        //alert("Clear data success!");
         this.initDB();
         this.showLuckyNames();
         this.showAllTickets();
+        if(importFlag) {
+          this.inport_names();
+        }
       });
     });
   }
@@ -79,12 +96,14 @@ var lucky = (function (){
         for(var i = 0, len = randomAry.length; i < len; i++) {
           nameAry.push(results.rows.item(randomAry[i] - 1).name);
         }
-        $('#random').text(nameAry.join(' '));
+        $('#random').html(nameAry.join('<br>'));
       });
     });
   }
 
   this.startRolling = function(){
+    $('#random-title').hide();
+    $('#random').show();
     this.intervalID = setInterval(this.rolling, this.speed);
   }
 
@@ -92,7 +111,8 @@ var lucky = (function (){
     clearInterval(this.intervalID);
 
     db.transaction(function(tx) {
-      var names = $('#random').text().split(' ');
+      console.log($('#random').html());
+      var names = $('#random').html().split('<br>');
       for(var i = 0, len = names.length; i < len; i++) {
         tx.executeSql("UPDATE names SET status = 1 WHERE name = ?", [names[i]],
           function (tx, results) {
@@ -125,20 +145,11 @@ $(function(){
     }
   });
 
-  $('body').delegate('#import-button', 'click', function(event){
-    var list_str = $('#data-source').val();
-    var names = [];
-    var list_lines = list_str.split("\n");
-    for (var i = 0; i < list_lines.length; i++) {
-      var name = $.trim(list_lines[i]);
-      if (name != "") names.push(name);
-    }
-    lucky.import_data(names);
-    lucky.showAllTickets();
-  });
+  //$('body').delegate('#import-button', 'click', lucky.inport_names);
+
 
   $('body').delegate('#clear-data-button', 'click', function(event){
-    lucky.clearDB();
+    lucky.clearDB(true);
   });
 
   $('#lucky-button').toggle(
@@ -151,6 +162,9 @@ $(function(){
       lucky.stopRolling();
     }
   );
+
+
+  $('#clear-data-button').trigger('click');
 
 });
 
